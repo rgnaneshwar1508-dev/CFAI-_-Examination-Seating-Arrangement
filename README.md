@@ -1,4 +1,7 @@
 # CFAI-_-Examination-Seating-Arrangement
+**Course:** Computational Foundations for AI (25SC1306E)  
+**Institution:** KL University, Bachupally  
+**Academic Year:** 2025–2026, Term 3
 ---
 
 # 🧠 CFAI Concepts Demonstrated
