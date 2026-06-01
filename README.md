@@ -217,9 +217,4 @@ B2 - Student118
 * Database integration
 * PDF seating chart export
 
----
 
-
-## License
-
-This project is licensed under the MIT License.
