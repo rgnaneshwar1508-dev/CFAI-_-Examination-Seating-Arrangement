@@ -1,4 +1,93 @@
 # CFAI-_-Examination-Seating-Arrangement
+---
+
+# 🧠 CFAI Concepts Demonstrated
+
+| Module              | File          | CO  | Concept                                                                                         |
+| ------------------- | ------------- | --- | ----------------------------------------------------------------------------------------------- |
+| Agent Model         | `agents.py`   | CO1 | Problem formulation using states, actions, goals, constraints, and seating representations      |
+| BFS Search          | `search.py`   | CO2 | Breadth-First Search for seat reachability and conflict-space traversal                         |
+| CSP Solver          | `csp.py`      | CO3 | Backtracking with MRV/LCV heuristics for seating allocation                                     |
+| Decision Utility    | `decision.py` | CO4 | Utility-based seat prioritization and conflict minimization                                     |
+| Uncertainty Handler | `bayes.py`    | CO5 | Probabilistic handling of uncertain attendance and dynamic hall availability                    |
+| Integrated Pipeline | `main.py`     | CO6 | Complete AI reasoning pipeline combining search + CSP + decision logic with explainable outputs |
+
+---
+
+# ⚙️ System Design
+
+## Problem Formulation (CO1)
+
+* **State:** `(student, room, seat)` assignment
+* **Actions:** Assign a valid seat to a student
+* **Goal:** Allocate seats without conflicts
+* **Constraints:**
+
+  * No adjacent seating conflicts
+  * Capacity limits
+  * Special seating requirements
+* **Cost Function:** Minimize conflicts and maximize seat utilization
+
+---
+
+## Search Strategy (CO2)
+
+BFS explores possible seating paths and validates room connectivity before CSP allocation begins. The search process helps identify feasible seat distributions while minimizing invalid arrangements.
+
+---
+
+## CSP Solver (CO3)
+
+* **Variables:** Students
+* **Domains:** Available seats
+* **Constraints:**
+
+  * No adjacency conflicts
+  * Unique seat assignment
+  * Room capacity validation
+* **Heuristics:**
+
+  * MRV (Minimum Remaining Values)
+  * LCV (Least Constraining Value)
+  * Degree Heuristic
+
+---
+
+## Decision Logic (CO4)
+
+The system uses utility-based reasoning to:
+
+* Prioritize special-needs students
+* Reduce conflict probability
+* Optimize room balancing
+* Improve seating efficiency
+
+---
+
+## Reasoning Under Uncertainty (CO5)
+
+Bayesian-style reasoning handles uncertain situations such as:
+
+* Student absence prediction
+* Last-minute room changes
+* Dynamic seat availability
+
+---
+
+## Integrated AI Pipeline (CO6)
+
+The project combines:
+
+1. Problem Representation
+2. Graph Search
+3. Constraint Satisfaction
+4. Decision-Making Logic
+5. Uncertainty Handling
+
+to generate an explainable and optimized examination seating arrangement.
+
+---
+
 # Examination Seating Arrangement System
 
 ## Overview
@@ -130,11 +219,6 @@ B2 - Student118
 
 ---
 
-## Contributors
-
-* Your Name
-
----
 
 ## License
 
