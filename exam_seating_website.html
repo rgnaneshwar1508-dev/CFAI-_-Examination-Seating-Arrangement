@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ExamSeat — Intelligent Examination Seating System</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0f0e0c;--paper:#f5f2eb;--cream:#ede9df;--accent:#c84b2f;--muted:#7a7468;--border:#d4cfc4;--white:#ffffff;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);overflow-x:hidden;}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.1rem 4rem;background:var(--paper);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'DM Serif Display',serif;font-size:1.35rem;color:var(--ink);text-decoration:none;cursor:pointer;}
+.nav-logo span{color:var(--accent);}
+.nav-links{display:flex;gap:2.2rem;list-style:none;}
+.nav-links a{font-size:0.82rem;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);text-decoration:none;cursor:pointer;transition:color 0.2s;}
+.nav-links a:hover{color:var(--ink);}
+.nav-cta{background:var(--ink);color:var(--paper);padding:0.55rem 1.3rem;border-radius:2px;font-size:0.8rem;font-weight:500;letter-spacing:0.05em;text-transform:uppercase;text-decoration:none;cursor:pointer;border:none;transition:background 0.2s;}
+.nav-cta:hover{background:var(--accent);}
+
+/* HERO */
+.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:8rem 4rem 4rem;gap:4rem;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 80% 50%,#e8e0ce 0%,transparent 70%);pointer-events:none;}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:0.5rem;font-size:0.72rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:1.4rem;}
+.hero-eyebrow::before{content:'';display:block;width:26px;height:1px;background:var(--accent);}
+.hero-title{font-family:'DM Serif Display',serif;font-size:clamp(2.6rem,5vw,4rem);line-height:1.1;color:var(--ink);margin-bottom:1.4rem;}
+.hero-title em{font-style:italic;color:var(--accent);}
+.hero-desc{font-size:1rem;line-height:1.8;color:var(--muted);max-width:460px;margin-bottom:2.2rem;}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap;}
+.btn-solid{background:var(--ink);color:var(--paper);padding:0.85rem 1.8rem;border-radius:2px;font-size:0.86rem;font-weight:500;letter-spacing:0.04em;text-decoration:none;display:inline-block;cursor:pointer;border:none;transition:background 0.2s;}
+.btn-solid:hover{background:var(--accent);}
+.btn-outline{background:transparent;color:var(--ink);padding:0.85rem 1.8rem;border-radius:2px;border:1.5px solid var(--border);font-size:0.86rem;font-weight:500;letter-spacing:0.04em;text-decoration:none;display:inline-block;cursor:pointer;transition:border-color 0.2s;}
+.btn-outline:hover{border-color:var(--ink);}
+
+.seat-demo{background:var(--white);border:1px solid var(--border);border-radius:4px;padding:1.8rem;box-shadow:10px 10px 0 var(--cream),11px 11px 0 var(--border);}
+.seat-demo-title{font-size:0.68rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;}
+.seat-grid-demo{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;}
+.seat-cell{height:42px;border-radius:3px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:8.5px;font-weight:500;border:1px solid transparent;transition:transform 0.15s;line-height:1.3;text-align:center;}
+.seat-cell:hover{transform:scale(1.07);}
+.sc-a{background:#dbeafe;color:#1e40af;border-color:#bfdbfe;}
+.sc-b{background:#dcfce7;color:#166534;border-color:#bbf7d0;}
+.sc-c{background:#fef3c7;color:#92400e;border-color:#fde68a;}
+.sc-d{background:#fce7f3;color:#9d174d;border-color:#fbcfe8;}
+.sc-e{background:#ede9fe;color:#5b21b6;border-color:#ddd6fe;}
+.sc-empty{background:#f5f5f4;color:#a8a29e;border-color:#e7e5e4;}
+.demo-legend{display:flex;gap:0.8rem;margin-top:0.8rem;flex-wrap:wrap;}
+.demo-leg-item{display:flex;align-items:center;gap:4px;font-size:9.5px;color:var(--muted);}
+.demo-dot{width:7px;height:7px;border-radius:50%;}
+
+/* SECTIONS */
+section{padding:5.5rem 4rem;}
+.section-label{font-size:0.7rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:0.7rem;display:flex;align-items:center;gap:0.5rem;}
+.section-label::before{content:'';width:18px;height:1px;background:var(--accent);}
+.section-title{font-family:'DM Serif Display',serif;font-size:clamp(1.9rem,3.2vw,2.6rem);line-height:1.2;margin-bottom:0.9rem;}
+.section-desc{font-size:0.97rem;line-height:1.8;color:var(--muted);max-width:540px;}
+
+/* ABSTRACT */
+#abstract{background:var(--ink);color:var(--paper);}
+#abstract .section-label{color:#c8a882;}
+#abstract .section-label::before{background:#c8a882;}
+#abstract .section-title{color:var(--paper);}
+.abstract-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;margin-top:2.5rem;}
+.abstract-text{font-size:0.95rem;line-height:1.9;color:#c8c0b0;}
+.abstract-highlights{display:flex;flex-direction:column;gap:1.4rem;}
+.highlight-item{border-left:2px solid #c8a882;padding-left:1.1rem;}
+.highlight-num{font-family:'DM Serif Display',serif;font-size:2rem;color:#c8a882;line-height:1;margin-bottom:0.25rem;}
+.highlight-label{font-size:0.8rem;color:#8a8070;letter-spacing:0.03em;}
+
+/* CO SECTION */
+#outcomes{background:var(--cream);}
+.co-filter{display:flex;gap:8px;flex-wrap:wrap;margin-top:2rem;margin-bottom:0.5rem;}
+.co-filter-btn{padding:0.4rem 1rem;border-radius:2px;border:1px solid var(--border);background:var(--white);font-size:0.78rem;font-weight:500;cursor:pointer;color:var(--muted);transition:all 0.18s;letter-spacing:0.03em;}
+.co-filter-btn:hover,.co-filter-btn.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+.co-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:1.4rem;margin-top:1rem;}
+.co-card{background:var(--white);border:1px solid var(--border);border-radius:4px;overflow:hidden;transition:box-shadow 0.22s,transform 0.22s;cursor:pointer;}
+.co-card:hover{box-shadow:7px 7px 0 var(--border);transform:translate(-3px,-3px);}
+.co-card-header{padding:1.4rem 1.6rem 1rem;position:relative;}
+.co-card-header::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.co1 .co-card-header::before{background:#c84b2f;}
+.co2 .co-card-header::before{background:#2a6049;}
+.co3 .co-card-header::before{background:#1d4063;}
+.co4 .co-card-header::before{background:#7c3d12;}
+.co5 .co-card-header::before{background:#4a1d96;}
+.co6 .co-card-header::before{background:#0f4c4c;}
+.co-big-num{font-family:'DM Serif Display',serif;font-size:2.8rem;line-height:1;opacity:0.07;position:absolute;top:0.7rem;right:1.2rem;}
+.co-badge{display:inline-block;font-size:0.68rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;padding:0.22rem 0.65rem;border-radius:2px;margin-bottom:0.8rem;}
+.co1 .co-badge{background:#fde8e3;color:#c84b2f;}
+.co2 .co-badge{background:#dcf0e7;color:#2a6049;}
+.co3 .co-badge{background:#dceaf5;color:#1d4063;}
+.co4 .co-badge{background:#fdebd8;color:#7c3d12;}
+.co5 .co-badge{background:#ede9fd;color:#4a1d96;}
+.co6 .co-badge{background:#d4efef;color:#0f4c4c;}
+.co-title{font-family:'DM Serif Display',serif;font-size:1.1rem;margin-bottom:0.6rem;line-height:1.3;}
+.co-short{font-size:0.86rem;line-height:1.7;color:var(--muted);}
+.co-card-body{padding:0 1.6rem;max-height:0;overflow:hidden;transition:max-height 0.35s ease,padding 0.25s;}
+.co-card.open .co-card-body{max-height:600px;padding-bottom:1.4rem;}
+.co-card-footer{padding:0.8rem 1.6rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.co-tags{display:flex;flex-wrap:wrap;gap:5px;}
+.co-tag{font-size:0.69rem;padding:0.2rem 0.55rem;background:var(--cream);border:1px solid var(--border);border-radius:2px;color:var(--muted);font-weight:500;}
+.co-toggle{font-size:0.75rem;color:var(--muted);letter-spacing:0.04em;display:flex;align-items:center;gap:4px;transition:color 0.18s;}
+.co-card:hover .co-toggle,.co-card.open .co-toggle{color:var(--ink);}
+.co-toggle-arrow{font-size:0.8rem;transition:transform 0.28s;}
+.co-card.open .co-toggle-arrow{transform:rotate(180deg);}
+.co-detail{font-size:0.84rem;line-height:1.75;color:var(--muted);margin-top:1rem;}
+.co-detail strong{color:var(--ink);font-weight:500;}
+.co-impl-box{margin-top:1rem;background:var(--cream);border-radius:3px;padding:0.9rem 1rem;border-left:3px solid var(--border);}
+.co1.open .co-impl-box{border-left-color:#c84b2f;}
+.co2.open .co-impl-box{border-left-color:#2a6049;}
+.co3.open .co-impl-box{border-left-color:#1d4063;}
+.co4.open .co-impl-box{border-left-color:#7c3d12;}
+.co5.open .co-impl-box{border-left-color:#4a1d96;}
+.co6.open .co-impl-box{border-left-color:#0f4c4c;}
+.co-impl-label{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:0.4rem;}
+.co-impl-text{font-size:0.83rem;line-height:1.7;color:var(--ink);}
+
+/* HOW IT WORKS */
+#howitworks{background:var(--white);}
+.steps-layout{display:grid;grid-template-columns:1fr 1.35fr;gap:5rem;margin-top:2.5rem;align-items:start;}
+.step-item{display:flex;gap:1.3rem;padding:1.3rem 0;border-bottom:1px solid var(--border);cursor:default;transition:padding-left 0.2s;}
+.step-item:first-child{padding-top:0;}
+.step-item:hover{padding-left:0.4rem;}
+.step-num{font-family:'DM Serif Display',serif;font-size:2.2rem;color:var(--border);line-height:1;min-width:2.2rem;transition:color 0.2s;}
+.step-item:hover .step-num{color:var(--accent);}
+.step-title{font-weight:600;font-size:0.95rem;margin-bottom:0.35rem;}
+.step-desc{font-size:0.85rem;color:var(--muted);line-height:1.7;}
+.algo-display{background:var(--ink);border-radius:4px;padding:1.8rem;position:sticky;top:7rem;}
+.algo-title{font-size:0.68rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#c8a882;margin-bottom:1rem;}
+.code-block{font-family:'Courier New',monospace;font-size:0.76rem;line-height:1.8;color:#c8c0b0;}
+.code-kw{color:#c8a882;}.code-fn{color:#7dd3b8;}.code-str{color:#a8d8a8;}.code-cmt{color:#5a5450;font-style:italic;}.code-num{color:#f09c6b;}
+
+/* FEATURES */
+#features{background:var(--paper);}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:2.5rem;border:1px solid var(--border);}
+.feature-cell{padding:2.2rem 1.8rem;background:var(--paper);border-right:1px solid var(--border);border-bottom:1px solid var(--border);transition:background 0.2s;}
+.feature-cell:hover{background:var(--white);}
+.feature-cell:nth-child(3n){border-right:none;}
+.feature-icon{width:38px;height:38px;background:var(--cream);border:1px solid var(--border);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:1.1rem;}
+.feature-title{font-weight:600;font-size:0.92rem;margin-bottom:0.45rem;}
+.feature-desc{font-size:0.83rem;color:var(--muted);line-height:1.7;}
+
+footer{background:var(--ink);color:var(--paper);padding:2.8rem 4rem;display:flex;align-items:center;justify-content:space-between;}
+.footer-logo{font-family:'DM Serif Display',serif;font-size:1.25rem;}
+.footer-logo span{color:#c8a882;}
+.footer-note{font-size:0.78rem;color:#6a6458;max-width:380px;text-align:center;line-height:1.6;}
+.footer-links{display:flex;gap:1.4rem;}
+.footer-links a{font-size:0.78rem;color:#6a6458;text-decoration:none;cursor:pointer;transition:color 0.2s;}
+.footer-links a:hover{color:var(--paper);}
+
+.reveal{opacity:0;transform:translateY(20px);transition:opacity 0.55s ease,transform 0.55s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+@media(max-width:900px){
+  nav{padding:1rem 1.5rem;}
+  .nav-links{display:none;}
+  .hero{grid-template-columns:1fr;padding:6rem 1.5rem 3rem;gap:2.5rem;}
+  section{padding:4rem 1.5rem;}
+  .abstract-grid,.steps-layout{grid-template-columns:1fr;gap:2rem;}
+  .features-grid{grid-template-columns:1fr;}
+  .feature-cell:nth-child(3n){border-right:1px solid var(--border);}
+  footer{flex-direction:column;gap:1.2rem;text-align:center;padding:2rem 1.5rem;}
+  .co-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo" onclick="navTo('hero')"><span>Exam</span>Seat</span>
+  <ul class="nav-links">
+    <li><a onclick="navTo('abstract')">Abstract</a></li>
+    <li><a onclick="navTo('outcomes')">Course Outcomes</a></li>
+    <li><a onclick="navTo('howitworks')">How it works</a></li>
+    <li><a onclick="navTo('features')">Features</a>
+    <a onclick="navTo('tryit')">Try it</a></li>
+    <li><a onclick="navTo('tryit')" style="color:var(--accent)">Try it</a></li>
+  </ul>
+  <button class="nav-cta" onclick="navTo('tryit')">Generate Seating</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="reveal">
+    <div class="hero-eyebrow">AI-powered exam management</div>
+    <h1 class="hero-title">Seating that's<br><em>fair, secure,</em><br>and conflict-free</h1>
+    <p class="hero-desc">An intelligent examination seating system using Constraint Satisfaction Problems (CSP), graph search, and heuristics to automatically generate optimal, policy-compliant seating plans.</p>
+    <div class="hero-btns">
+      <button class="btn-solid" onclick="navTo('outcomes')">Explore Course Outcomes</button>
+      <button class="btn-outline" onclick="navTo('howitworks')">How it works</button>
+    </div>
+  </div>
+  <div class="reveal" style="transition-delay:0.18s">
+    <div class="seat-demo">
+      <div class="seat-demo-title">Exam hall — row allocation preview</div>
+      <div class="seat-grid-demo">
+        <div class="seat-cell sc-a">Arjun<br>A·Math</div>
+        <div class="seat-cell sc-b">Rahul<br>B·Phys</div>
+        <div class="seat-cell sc-c">Divya<br>C·Chem</div>
+        <div class="seat-cell sc-d">Meera<br>D·Bio</div>
+        <div class="seat-cell sc-e">Preet<br>E·Math</div>
+        <div class="seat-cell sc-e">Sonal<br>E·Phys</div>
+        <div class="seat-cell sc-a">Vikram<br>A·Chem</div>
+        <div class="seat-cell sc-d">Ananya<br>D·Math</div>
+        <div class="seat-cell sc-b">Suresh<br>B·Bio</div>
+        <div class="seat-cell sc-c">Lakshmi<br>C·Phys</div>
+        <div class="seat-cell sc-c">Karan<br>C·Math</div>
+        <div class="seat-cell sc-d">Sneha<br>D·Phys</div>
+        <div class="seat-cell sc-b">Priya<br>B·Chem</div>
+        <div class="seat-cell sc-e">Arun<br>E·Bio</div>
+        <div class="seat-cell sc-a">Riya<br>A·Phys</div>
+        <div class="seat-cell sc-b">Nisha<br>B·Math</div>
+        <div class="seat-cell sc-c">Tarun<br>C·Bio</div>
+        <div class="seat-cell sc-a">Pooja<br>A·Bio</div>
+        <div class="seat-cell sc-empty">♿ Reserved</div>
+        <div class="seat-cell sc-d">Raj<br>D·Chem</div>
+      </div>
+      <div class="demo-legend">
+        <div class="demo-leg-item"><div class="demo-dot" style="background:#3b82f6"></div>Class A</div>
+        <div class="demo-leg-item"><div class="demo-dot" style="background:#22c55e"></div>Class B</div>
+        <div class="demo-leg-item"><div class="demo-dot" style="background:#f59e0b"></div>Class C</div>
+        <div class="demo-leg-item"><div class="demo-dot" style="background:#ec4899"></div>Class D</div>
+        <div class="demo-leg-item"><div class="demo-dot" style="background:#8b5cf6"></div>Class E</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABSTRACT -->
+<section id="abstract">
+  <div class="section-label">Project abstract</div>
+  <h2 class="section-title">What is ExamSeat?</h2>
+  <div class="abstract-grid">
+    <div>
+      <p class="abstract-text">The Examination Seating Arrangement system allocates students to exam seats while avoiding adjacency conflicts and meeting special requirements. The primary objective is to ensure fair and secure seating by preventing students from the same class or subject from sitting next to each other.</p>
+      <br>
+      <p class="abstract-text">The system also handles special needs such as accessible seating for differently-abled students or reserved seats for specific conditions. When constraints increase, the arrangement can become over-constrained — no valid seating pattern satisfies all requirements simultaneously.</p>
+      <br>
+      <p class="abstract-text">The system identifies such situations and explains the reason for failure: insufficient seats, too many restrictions, or conflicting conditions. The solution uses CSP and graph-based algorithms to generate efficient, explainable seating plans, improving exam management and reducing manual errors.</p>
+    </div>
+    <div class="abstract-highlights">
+      <div class="highlight-item reveal"><div class="highlight-num">CSP</div><div class="highlight-label">Constraint Satisfaction Problem formulation</div></div>
+      <div class="highlight-item reveal" style="transition-delay:0.1s"><div class="highlight-num">BFS/A*</div><div class="highlight-label">Graph search for optimal placement</div></div>
+      <div class="highlight-item reveal" style="transition-delay:0.18s"><div class="highlight-num">MRV</div><div class="highlight-label">Minimum Remaining Values heuristic</div></div>
+      <div class="highlight-item reveal" style="transition-delay:0.26s"><div class="highlight-num">BT</div><div class="highlight-label">Backtracking with forward checking</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- COURSE OUTCOMES -->
+<section id="outcomes">
+  <div class="section-label">Course outcomes</div>
+  <h2 class="section-title">CO-wise project coverage</h2>
+  <p class="section-desc">Each course outcome (CO1–CO6) is directly implemented in ExamSeat. Click any card to expand full details.</p>
+
+  <div class="co-filter">
+    <button class="co-filter-btn active" onclick="filterCO('all',this)">All COs</button>
+    <button class="co-filter-btn" onclick="filterCO('co1',this)">CO1</button>
+    <button class="co-filter-btn" onclick="filterCO('co2',this)">CO2</button>
+    <button class="co-filter-btn" onclick="filterCO('co3',this)">CO3</button>
+    <button class="co-filter-btn" onclick="filterCO('co4',this)">CO4</button>
+    <button class="co-filter-btn" onclick="filterCO('co5',this)">CO5</button>
+    <button class="co-filter-btn" onclick="filterCO('co6',this)">CO6</button>
+  </div>
+
+  <div class="co-grid" id="coGrid">
+
+    <div class="co-card co1 reveal" data-co="co1" onclick="toggleCO(this)">
+      <div class="co-card-header">
+        <div class="co-big-num">CO1</div>
+        <div class="co-badge">CO1 — Problem Formulation</div>
+        <div class="co-title">Formulate real-world tasks as AI problems</div>
+        <div class="co-short">State space · Actions · Transitions · Goals · Costs · Constraints · Python data structures</div>
+      </div>
+      <div class="co-card-body">
+        <div class="co-detail">
+          Students, seats, and rules are formalised into a CSP: <strong>variables</strong> are seats, <strong>domains</strong> are eligible students per seat, and <strong>constraints</strong> are adjacency restrictions. Entire problem state is stored in Python lists and dicts with traceable reasoning steps at every node.
+        </div>
+        <div class="co-impl-box">
+          <div class="co-impl-label">Implementation in ExamSeat</div>
+          <div class="co-impl-text">The hall grid is the state space. Each seat assignment is an action. The goal state is a complete, conflict-free assignment. Costs are represented by backtrack depth. All structures use <strong>Python lists/dicts</strong> with class wrappers (<code>Student</code>, <code>Hall</code>, <code>Constraint</code>). Full reasoning trace is printed at each assignment step.</div>
+        </div>
+      </div>
+      <div class="co-card-footer">
+        <div class="co-tags">
+          <span class="co-tag">State space</span><span class="co-tag">Actions</span><span class="co-tag">Goals</span><span class="co-tag">Python dicts/lists</span>
+        </div>
+        <div class="co-toggle">Details <span class="co-toggle-arrow">▾</span></div>
+      </div>
+    </div>
+
+    <div class="co-card co2 reveal" data-co="co2" style="transition-delay:0.07s" onclick="toggleCO(this)">
+      <div class="co-card-header">
+        <div class="co-big-num">CO2</div>
+        <div class="co-badge">CO2 — Search Algorithms</div>
+        <div class="co-title">Implement and analyze graph/state-space search</div>
+        <div class="co-short">BFS · DFS · UCS · A* · Greedy · Admissible heuristics · Time/space trade-offs</div>
+      </div>
+      <div class="co-card-body">
+        <div class="co-detail">
+          Multiple search strategies are implemented and compared empirically. <strong>BFS</strong> explores seats level-by-level. <strong>DFS with backtracking</strong> goes deep first. <strong>A*</strong> uses a minimum-conflict heuristic proven admissible (never overestimates). Time and space complexity are logged across all strategies.
+        </div>
+        <div class="co-impl-box">
+          <div class="co-impl-label">Implementation in ExamSeat</div>
+          <div class="co-impl-text">Seat selection order uses BFS across the grid graph. The core solver applies DFS backtracking. An A* variant uses <strong>h(n) = number of remaining conflicts</strong> as the heuristic — admissible because it never overestimates. Empirical comparison outputs backtrack counts, time taken, and nodes expanded per algorithm.</div>
+        </div>
+      </div>
+      <div class="co-card-footer">
+        <div class="co-tags">
+          <span class="co-tag">BFS</span><span class="co-tag">DFS</span><span class="co-tag">A*</span><span class="co-tag">Heuristics</span><span class="co-tag">Complexity</span>
+        </div>
+        <div class="co-toggle">Details <span class="co-toggle-arrow">▾</span></div>
+      </div>
+    </div>
+
+    <div class="co-card co3 reveal" data-co="co3" style="transition-delay:0.13s" onclick="toggleCO(this)">
+      <div class="co-card-header">
+        <div class="co-big-num">CO3</div>
+        <div class="co-badge">CO3 — CSP Solving</div>
+        <div class="co-title">Model and solve constraint satisfaction problems</div>
+        <div class="co-short">Backtracking · Propagation · MRV · Degree heuristic · LCV · Scheduling/resource tasks</div>
+      </div>
+      <div class="co-card-body">
+        <div class="co-detail">
+          ExamSeat is a textbook CSP. <strong>MRV</strong> selects the seat with the fewest valid students first. <strong>Degree heuristic</strong> breaks ties by number of constrained neighbours. <strong>LCV</strong> orders student placement to keep the most options open. Forward checking prunes domains after each assignment.
+        </div>
+        <div class="co-impl-box">
+          <div class="co-impl-label">Implementation in ExamSeat</div>
+          <div class="co-impl-text">Core solver: backtracking + forward checking. MRV picks the most constrained seat. Degree heuristic resolves ties. LCV orders domain values to minimise future conflicts. Arc consistency (AC-3) is optionally run as pre-processing. Failure cases output a <strong>constraint proof</strong> explaining why no solution exists.</div>
+        </div>
+      </div>
+      <div class="co-card-footer">
+        <div class="co-tags">
+          <span class="co-tag">Backtracking</span><span class="co-tag">MRV</span><span class="co-tag">Degree</span><span class="co-tag">LCV</span><span class="co-tag">AC-3</span>
+        </div>
+        <div class="co-toggle">Details <span class="co-toggle-arrow">▾</span></div>
+      </div>
+    </div>
+
+    <div class="co-card co4 reveal" data-co="co4" style="transition-delay:0.19s" onclick="toggleCO(this)">
+      <div class="co-card-header">
+        <div class="co-big-num">CO4</div>
+        <div class="co-badge">CO4 — Decision-Making Agents</div>
+        <div class="co-title">Design agents for sequential/adversarial settings</div>
+        <div class="co-short">Minimax · Alpha-beta pruning · Utility-based policy · Bounded computation · Failure modes</div>
+      </div>
+      <div class="co-card-body">
+        <div class="co-detail">
+          An invigilator agent monitors seating and detects violations. <strong>Minimax</strong> models adversarial cheating attempts vs the invigilator's optimal blocking strategy. <strong>Alpha-beta pruning</strong> enables real-time decisions under bounded computation by eliminating irrelevant branches.
+        </div>
+        <div class="co-impl-box">
+          <div class="co-impl-label">Implementation in ExamSeat</div>
+          <div class="co-impl-text">A <strong>utility-based agent</strong> evaluates candidate seating layouts with a score function combining conflict count, accessibility compliance, and proximity risk. Adversarial analysis identifies highest-risk adjacent pairs. Alpha-beta tree prunes irrelevant seat-swap options, enabling recommendations within a fixed compute budget.</div>
+        </div>
+      </div>
+      <div class="co-card-footer">
+        <div class="co-tags">
+          <span class="co-tag">Minimax</span><span class="co-tag">Alpha-beta</span><span class="co-tag">Utility</span><span class="co-tag">Bounded search</span>
+        </div>
+        <div class="co-toggle">Details <span class="co-toggle-arrow">▾</span></div>
+      </div>
+    </div>
+
+    <div class="co-card co5 reveal" data-co="co5" style="transition-delay:0.25s" onclick="toggleCO(this)">
+      <div class="co-card-header">
+        <div class="co-big-num">CO5</div>
+        <div class="co-badge">CO5 — Probabilistic Reasoning</div>
+        <div class="co-title">Reasoning under uncertainty with Bayesian networks</div>
+        <div class="co-short">Bayesian networks · Markov models · Variable elimination · Message passing · Sampling</div>
+      </div>
+      <div class="co-card-body">
+        <div class="co-detail">
+          A <strong>Bayesian network</strong> models cheating risk based on class proximity, subject similarity, and historical behaviour. <strong>Markov chains</strong> model the sequential hall-filling process. <strong>Variable elimination</strong> and message passing are used for efficient inference over seat configurations.
+        </div>
+        <div class="co-impl-box">
+          <div class="co-impl-label">Implementation in ExamSeat</div>
+          <div class="co-impl-text">After placement, each adjacent pair is scored by a Bayesian network with nodes: <em>SameClass</em>, <em>SameSubject</em>, <em>ProximityRisk</em>, <em>CheatProbability</em>. Inference via variable elimination marginalises over unknown exam-day factors. High-risk pairs (P > 0.7) are flagged in the final invigilator report. No overlap with statistics — purely algorithmic inference.</div>
+        </div>
+      </div>
+      <div class="co-card-footer">
+        <div class="co-tags">
+          <span class="co-tag">Bayesian net</span><span class="co-tag">Markov</span><span class="co-tag">Variable elim.</span><span class="co-tag">Inference</span>
+        </div>
+        <div class="co-toggle">Details <span class="co-toggle-arrow">▾</span></div>
+      </div>
+    </div>
+
+    <div class="co-card co6 reveal" data-co="co6" style="transition-delay:0.31s" onclick="toggleCO(this)">
+      <div class="co-card-header">
+        <div class="co-big-num">CO6</div>
+        <div class="co-badge">CO6 — Integrated AI Pipeline</div>
+        <div class="co-title">Build integrated AI reasoning pipelines in Python</div>
+        <div class="co-short">Representation + Search + CSP + Uncertainty + Decision logic · Reasoning traces · Constraint proofs</div>
+      </div>
+      <div class="co-card-body">
+        <div class="co-detail">
+          ExamSeat integrates all components into a <strong>single Python pipeline</strong> with explainable outputs. Every decision — from seat assignment to risk flagging — is logged with a reasoning trace, constraint justification, and inference step.
+        </div>
+        <div class="co-impl-box">
+          <div class="co-impl-label">Implementation in ExamSeat</div>
+          <div class="co-impl-text">Full pipeline: <strong>(1)</strong> Parse hall config → <strong>(2)</strong> Formulate CSP → <strong>(3)</strong> Run solver with step-by-step trace → <strong>(4)</strong> Apply Bayesian risk scoring → <strong>(5)</strong> Generate invigilator report. Every assignment is justified with a constraint proof. Over-constrained failures output the specific rule that made the problem unsolvable.</div>
+        </div>
+      </div>
+      <div class="co-card-footer">
+        <div class="co-tags">
+          <span class="co-tag">Pipeline</span><span class="co-tag">Reasoning trace</span><span class="co-tag">Constraint proof</span><span class="co-tag">Explainability</span>
+        </div>
+        <div class="co-toggle">Details <span class="co-toggle-arrow">▾</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="howitworks">
+  <div class="section-label">Algorithm</div>
+  <h2 class="section-title">How the solver works</h2>
+  <div class="steps-layout">
+    <div>
+      <div class="step-item reveal"><div class="step-num">01</div><div><div class="step-title">Problem formulation (CO1)</div><div class="step-desc">The hall is a grid graph. Each seat is a variable, each student a domain value. Adjacency rules become hard constraints. Accessible seats are special-case constraints handled before the main solver runs.</div></div></div>
+      <div class="step-item reveal" style="transition-delay:0.08s"><div class="step-num">02</div><div><div class="step-title">Variable ordering — MRV (CO3)</div><div class="step-desc">Seats with the fewest valid student candidates are selected first. Ties are broken by the degree heuristic — seats with more constrained neighbours go first.</div></div></div>
+      <div class="step-item reveal" style="transition-delay:0.14s"><div class="step-num">03</div><div><div class="step-title">Value ordering — LCV (CO3)</div><div class="step-desc">For each seat, students are tried in Least Constraining Value order — placing the student that rules out the fewest options for neighbouring seats first.</div></div></div>
+      <div class="step-item reveal" style="transition-delay:0.2s"><div class="step-num">04</div><div><div class="step-title">Forward checking &amp; backtracking (CO2, CO3)</div><div class="step-desc">After each assignment, forward checking prunes inconsistent values from neighbouring domains. If a domain empties, the solver backtracks and logs the failure reason.</div></div></div>
+      <div class="step-item reveal" style="transition-delay:0.26s"><div class="step-num">05</div><div><div class="step-title">Over-constraint detection (CO3, CO6)</div><div class="step-desc">If no valid assignment exists, the system explains why: too many students from the same class, insufficient seats, or conflicting adjacency requirements.</div></div></div>
+      <div class="step-item reveal" style="transition-delay:0.32s"><div class="step-num">06</div><div><div class="step-title">Risk scoring &amp; report (CO5, CO6)</div><div class="step-desc">A Bayesian network scores each seat pair for cheating risk. The final report includes the seat map, constraint proof, inference steps, and flagged high-risk adjacencies.</div></div></div>
+    </div>
+    <div class="algo-display reveal" style="transition-delay:0.18s">
+      <div class="algo-title">CSP solver — Python pseudocode</div>
+      <div class="code-block">
+<span class="code-kw">def</span> <span class="code-fn">solve_seating</span>(hall, students, constraints):<br>
+&nbsp;&nbsp;<span class="code-cmt"># CO1: Formulate as CSP</span><br>
+&nbsp;&nbsp;csp = <span class="code-fn">CSP</span>(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;variables=hall.seats,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;domains={s: students[:] <span class="code-kw">for</span> s <span class="code-kw">in</span> hall.seats},<br>
+&nbsp;&nbsp;&nbsp;&nbsp;constraints=constraints)<br><br>
+&nbsp;&nbsp;<span class="code-cmt"># CO3: MRV + Degree heuristic</span><br>
+&nbsp;&nbsp;<span class="code-kw">def</span> <span class="code-fn">select_seat</span>(unassigned, domains):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-kw">return</span> <span class="code-fn">min</span>(unassigned, key=<span class="code-kw">lambda</span> s:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="code-fn">len</span>(domains[s]), -<span class="code-fn">degree</span>(s)))<br><br>
+&nbsp;&nbsp;<span class="code-cmt"># CO3: LCV ordering</span><br>
+&nbsp;&nbsp;<span class="code-kw">def</span> <span class="code-fn">order_values</span>(seat, domain):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-kw">return</span> <span class="code-fn">sorted</span>(domain,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;key=<span class="code-kw">lambda</span> st: <span class="code-fn">conflicts_caused</span>(seat, st))<br><br>
+&nbsp;&nbsp;<span class="code-cmt"># CO2: Backtracking + forward check</span><br>
+&nbsp;&nbsp;<span class="code-kw">def</span> <span class="code-fn">backtrack</span>(assignment):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-kw">if</span> <span class="code-fn">complete</span>(assignment): <span class="code-kw">return</span> assignment<br>
+&nbsp;&nbsp;&nbsp;&nbsp;seat = <span class="code-fn">select_seat</span>(unassigned, domains)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-kw">for</span> student <span class="code-kw">in</span> <span class="code-fn">order_values</span>(seat, domains[seat]):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-kw">if</span> <span class="code-fn">consistent</span>(seat, student, assignment):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assignment[seat] = student<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inf = <span class="code-fn">forward_check</span>(seat, student)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-kw">if</span> inf != FAILURE:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;result = <span class="code-fn">backtrack</span>(assignment)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-kw">if</span> result: <span class="code-kw">return</span> result<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-fn">restore_domains</span>(inf)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-kw">return</span> FAILURE<br><br>
+&nbsp;&nbsp;<span class="code-cmt"># CO5: Bayesian risk scoring</span><br>
+&nbsp;&nbsp;sol = <span class="code-fn">backtrack</span>({})<br>
+&nbsp;&nbsp;<span class="code-kw">if</span> sol: <span class="code-kw">return</span> <span class="code-fn">score_risk</span>(sol, bayes_net)<br>
+&nbsp;&nbsp;<span class="code-kw">else</span>: <span class="code-kw">raise</span> <span class="code-fn">OverConstrainedError</span>(<span class="code-fn">explain</span>())
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-label">System capabilities</div>
+  <h2 class="section-title">What the system can do</h2>
+  <div class="features-grid">
+    <div class="feature-cell reveal"><div class="feature-icon">🗺️</div><div class="feature-title">Conflict-free seat maps</div><div class="feature-desc">Automatically generates seating plans where no two students from the same class or subject are adjacent — horizontally, vertically, or diagonally.</div></div>
+    <div class="feature-cell reveal" style="transition-delay:0.06s"><div class="feature-icon">♿</div><div class="feature-title">Accessibility support</div><div class="feature-desc">Reserves front-row or aisle seats for differently-abled students before running the main solver. Treated as hard constraints with highest priority.</div></div>
+    <div class="feature-cell reveal" style="transition-delay:0.12s"><div class="feature-icon">⚡</div><div class="feature-title">Over-constraint detection</div><div class="feature-desc">When no valid arrangement exists, the system identifies the exact reason — same-class overload, insufficient seats, or conflicting rules — and explains it clearly.</div></div>
+    <div class="feature-cell reveal" style="transition-delay:0.18s"><div class="feature-icon">🔍</div><div class="feature-title">Step-by-step reasoning trace</div><div class="feature-desc">Every assignment, constraint check, forward-check result, and backtrack is logged with a full trace — satisfying CO6 explainability requirements.</div></div>
+    <div class="feature-cell reveal" style="transition-delay:0.24s"><div class="feature-icon">📊</div><div class="feature-title">Heuristic comparison</div><div class="feature-desc">Run MRV, Degree, or LCV variants independently and compare backtrack counts, time taken, and nodes expanded — satisfying CO2's empirical analysis.</div></div>
+    <div class="feature-cell reveal" style="transition-delay:0.3s"><div class="feature-icon">🧠</div><div class="feature-title">Bayesian risk scoring</div><div class="feature-desc">After placement, a Bayesian network estimates cheating risk for each adjacent pair based on class proximity, subject overlap, and exam history (CO5).</div></div>
+  </div>
+</section>
+
+
+<!-- TRY IT -->
+<section id="tryit" style="background:var(--ink);color:var(--paper);">
+  <div class="section-label" style="color:#c8a882;"><span style="background:#c8a882;display:inline-block;width:18px;height:1px;margin-right:8px;vertical-align:middle;"></span>Live demo</div>
+  <h2 class="section-title" style="color:var(--paper);">Generate your exam seating</h2>
+  <p class="section-desc" style="color:#a09880;max-width:600px;">Add students, configure the hall, and run the CSP solver to get a conflict-free seating arrangement instantly.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:2rem;margin-top:2.5rem;">
+
+    <!-- LEFT: Config + Students -->
+    <div style="display:flex;flex-direction:column;gap:1.2rem;">
+
+      <!-- Hall Config -->
+      <div style="background:#1a1916;border:1px solid #2e2c28;border-radius:4px;padding:1.4rem;">
+        <div style="font-size:0.72rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#c8a882;margin-bottom:1rem;">Hall configuration</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <label style="font-size:0.75rem;color:#8a8070;display:block;margin-bottom:4px;">Rows</label>
+            <input type="number" id="t-rows" value="4" min="2" max="8" style="width:100%;background:#0f0e0c;border:1px solid #2e2c28;color:var(--paper);padding:7px 10px;border-radius:3px;font-size:0.9rem;">
+          </div>
+          <div>
+            <label style="font-size:0.75rem;color:#8a8070;display:block;margin-bottom:4px;">Columns</label>
+            <input type="number" id="t-cols" value="5" min="2" max="10" style="width:100%;background:#0f0e0c;border:1px solid #2e2c28;color:var(--paper);padding:7px 10px;border-radius:3px;font-size:0.9rem;">
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          <label style="font-size:0.75rem;color:#8a8070;display:block;margin-bottom:4px;">Adjacency constraint</label>
+          <select id="t-adj" style="width:100%;background:#0f0e0c;border:1px solid #2e2c28;color:var(--paper);padding:7px 10px;border-radius:3px;font-size:0.88rem;">
+            <option value="h">Horizontal only (left/right)</option>
+            <option value="4" selected>4 directions (up/down/left/right)</option>
+            <option value="8">8 directions (including diagonal)</option>
+          </select>
+        </div>
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:7px;">
+          <label style="font-size:0.82rem;color:#a09880;display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <input type="checkbox" id="t-noclass" checked style="accent-color:#c8a882;"> No same class adjacent
+          </label>
+          <label style="font-size:0.82rem;color:#a09880;display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <input type="checkbox" id="t-nosub" checked style="accent-color:#c8a882;"> No same subject adjacent
+          </label>
+          <label style="font-size:0.82rem;color:#a09880;display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <input type="checkbox" id="t-acc" style="accent-color:#c8a882;"> Reserve front row for accessibility
+          </label>
+        </div>
+      </div>
+
+      <!-- Add Student -->
+      <div style="background:#1a1916;border:1px solid #2e2c28;border-radius:4px;padding:1.4rem;">
+        <div style="font-size:0.72rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#c8a882;margin-bottom:1rem;">Add student</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div>
+            <label style="font-size:0.75rem;color:#8a8070;display:block;margin-bottom:4px;">Name</label>
+            <input type="text" id="t-name" placeholder="e.g. Arjun" style="width:100%;background:#0f0e0c;border:1px solid #2e2c28;color:var(--paper);padding:7px 10px;border-radius:3px;font-size:0.88rem;" onkeydown="if(event.key==='Enter')addTryStudent()">
+          </div>
+          <div>
+            <label style="font-size:0.75rem;color:#8a8070;display:block;margin-bottom:4px;">Class</label>
+            <input type="text" id="t-class" placeholder="e.g. A" style="width:100%;background:#0f0e0c;border:1px solid #2e2c28;color:var(--paper);padding:7px 10px;border-radius:3px;font-size:0.88rem;" onkeydown="if(event.key==='Enter')addTryStudent()">
+          </div>
+          <div>
+            <label style="font-size:0.75rem;color:#8a8070;display:block;margin-bottom:4px;">Subject</label>
+            <input type="text" id="t-sub" placeholder="e.g. Maths" style="width:100%;background:#0f0e0c;border:1px solid #2e2c28;color:var(--paper);padding:7px 10px;border-radius:3px;font-size:0.88rem;" onkeydown="if(event.key==='Enter')addTryStudent()">
+          </div>
+          <div style="display:flex;align-items:flex-end;">
+            <label style="font-size:0.82rem;color:#a09880;display:flex;align-items:center;gap:6px;cursor:pointer;padding-bottom:8px;">
+              <input type="checkbox" id="t-sacc" style="accent-color:#c8a882;"> ♿ Accessible
+            </label>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button onclick="addTryStudent()" style="flex:1;background:#c8a882;color:#0f0e0c;border:none;padding:9px;border-radius:3px;font-size:0.85rem;font-weight:600;cursor:pointer;letter-spacing:0.04em;">+ Add Student</button>
+          <button onclick="loadSampleStudents()" style="background:transparent;color:#8a8070;border:1px solid #2e2c28;padding:9px 14px;border-radius:3px;font-size:0.82rem;cursor:pointer;">Sample data</button>
+        </div>
+      </div>
+
+      <!-- Student list -->
+      <div style="background:#1a1916;border:1px solid #2e2c28;border-radius:4px;padding:1.4rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem;">
+          <div style="font-size:0.72rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#c8a882;">Students <span id="t-count" style="color:#5a5450;">0</span></div>
+          <button onclick="clearStudents()" style="font-size:0.72rem;color:#5a5450;background:none;border:none;cursor:pointer;">Clear all</button>
+        </div>
+        <div id="t-studentlist" style="max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;">
+          <p style="font-size:0.82rem;color:#5a5450;padding:4px 0;">No students yet — add some above or load sample data.</p>
+        </div>
+      </div>
+
+      <!-- Run button -->
+      <button onclick="runTrySolver()" style="width:100%;background:#c84b2f;color:white;border:none;padding:14px;border-radius:3px;font-size:0.95rem;font-weight:600;cursor:pointer;letter-spacing:0.05em;transition:background 0.2s;" onmouseover="this.style.background='#a83520'" onmouseout="this.style.background='#c84b2f'">
+        ▶ Run CSP Solver
+      </button>
+    </div>
+
+    <!-- RIGHT: Output -->
+    <div style="display:flex;flex-direction:column;gap:1.2rem;">
+
+      <!-- Stats row -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+        <div style="background:#1a1916;border:1px solid #2e2c28;border-radius:4px;padding:1rem;">
+          <div style="font-size:0.7rem;color:#5a5450;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Total seats</div>
+          <div id="t-mseats" style="font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--paper);">—</div>
+        </div>
+        <div style="background:#1a1916;border:1px solid #2e2c28;border-radius:4px;padding:1rem;">
+          <div style="font-size:0.7rem;color:#5a5450;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Students</div>
+          <div id="t-mstu" style="font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--paper);">—</div>
+        </div>
+        <div style="background:#1a1916;border:1px solid #2e2c28;border-radius:4px;padding:1rem;">
+          <div style="font-size:0.7rem;color:#5a5450;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Status</div>
+          <div id="t-mstatus" style="font-size:0.9rem;color:var(--paper);padding-top:4px;">—</div>
+        </div>
+      </div>
+
+      <!-- Seat Map -->
+      <div style="background:#1a1916;border:1px solid #2e2c28;border-radius:4px;padding:1.4rem;min-height:220px;">
+        <div style="font-size:0.72rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#c8a882;margin-bottom:1rem;">Seat map</div>
+        <div id="t-seatmap">
+          <p style="font-size:0.85rem;color:#5a5450;">Run the solver to see the seat map here.</p>
+        </div>
+        <!-- legend -->
+        <div id="t-legend" style="display:none;margin-top:1rem;display:flex;flex-wrap:wrap;gap:10px;"></div>
+      </div>
+
+      <!-- Solve message -->
+      <div id="t-msg" style="display:none;border-radius:4px;padding:1rem 1.2rem;">
+      </div>
+
+      <!-- Trace -->
+      <div style="background:#1a1916;border:1px solid #2e2c28;border-radius:4px;padding:1.4rem;">
+        <div style="font-size:0.72rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#c8a882;margin-bottom:0.8rem;">Reasoning trace</div>
+        <div id="t-trace" style="font-family:'Courier New',monospace;font-size:0.75rem;line-height:1.7;color:#6a6458;max-height:200px;overflow-y:auto;">
+          Run the solver to see step-by-step constraint checking.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo"><span>Exam</span>Seat</div>
+  <div class="footer-note">AI course project demonstrating CO1–CO6:<br>Problem formulation · Search · CSP · Decision agents · Probabilistic reasoning · Integrated pipelines</div>
+  <div class="footer-links">
+    <a onclick="navTo('abstract')">Abstract</a>
+    <a onclick="navTo('outcomes')">COs</a>
+    <a onclick="navTo('howitworks')">Algorithm</a>
+    <a onclick="navTo('features')">Features</a>
+    <a onclick="navTo('tryit')">Try it</a>
+  </div>
+</footer>
+
+<script>
+function navTo(id){
+  const el=document.getElementById(id);
+  if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function toggleCO(card){
+  const wasOpen=card.classList.contains('open');
+  document.querySelectorAll('.co-card.open').forEach(c=>c.classList.remove('open'));
+  if(!wasOpen) card.classList.add('open');
+}
+function filterCO(type,btn){
+  document.querySelectorAll('.co-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.co-card').forEach(card=>{
+    if(type==='all'||card.dataset.co===type){card.style.display='';}
+    else{card.style.display='none';card.classList.remove('open');}
+  });
+}
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}});
+},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+/* ===== TRY IT SOLVER ===== */
+let tryStudents=[];
+const classPalette=['#3b82f6','#22c55e','#f59e0b','#ec4899','#8b5cf6','#ef4444','#14b8a6','#f97316','#6366f1','#84cc16'];
+const classColorMap={};let classColorIdx=0;
+function getClassColor(cls){
+  if(!classColorMap[cls]){classColorMap[cls]=classPalette[classColorIdx%classPalette.length];classColorIdx++;}
+  return classColorMap[cls];
+}
+function addTryStudent(){
+  const n=document.getElementById('t-name').value.trim();
+  const c=document.getElementById('t-class').value.trim().toUpperCase();
+  const s=document.getElementById('t-sub').value.trim();
+  const a=document.getElementById('t-sacc').checked;
+  if(!n||!c||!s){alert('Please fill in Name, Class and Subject.');return;}
+  tryStudents.push({id:tryStudents.length+1,name:n,cls:c,subject:s,accessible:a});
+  document.getElementById('t-name').value='';
+  document.getElementById('t-class').value='';
+  document.getElementById('t-sub').value='';
+  document.getElementById('t-sacc').checked=false;
+  document.getElementById('t-name').focus();
+  renderTryStudentList();
+}
+function removeStudent(idx){tryStudents.splice(idx,1);tryStudents.forEach((s,i)=>s.id=i+1);renderTryStudentList();}
+function clearStudents(){tryStudents=[];renderTryStudentList();}
+function renderTryStudentList(){
+  const el=document.getElementById('t-studentlist');
+  document.getElementById('t-count').textContent=tryStudents.length;
+  if(!tryStudents.length){el.innerHTML='<p style="font-size:0.82rem;color:#5a5450;padding:4px 0;">No students yet.</p>';return;}
+  el.innerHTML=tryStudents.map((s,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:5px 8px;background:#0f0e0c;border-radius:3px;font-size:0.8rem;">
+      <div style="width:8px;height:8px;border-radius:50%;background:${getClassColor(s.cls)};flex-shrink:0;"></div>
+      <span style="flex:1;color:#c8c0b0;">${s.name}</span>
+      <span style="font-size:0.7rem;background:#1f1e1b;color:#c8a882;padding:2px 7px;border-radius:2px;">${s.cls}</span>
+      <span style="font-size:0.7rem;color:#6a6458;">${s.subject}</span>
+      ${s.accessible?'<span style="font-size:0.75rem;">♿</span>':''}
+      <button onclick="removeStudent(${i})" style="background:none;border:none;color:#5a5450;cursor:pointer;font-size:1rem;line-height:1;padding:0 2px;">×</button>
+    </div>`).join('');
+}
+function loadSampleStudents(){
+  tryStudents=[];classColorIdx=0;Object.keys(classColorMap).forEach(k=>delete classColorMap[k]);
+  const data=[
+    {name:'Arjun',cls:'A',subject:'Maths',accessible:false},
+    {name:'Priya',cls:'A',subject:'Maths',accessible:false},
+    {name:'Rahul',cls:'B',subject:'Physics',accessible:false},
+    {name:'Sneha',cls:'A',subject:'Chemistry',accessible:true},
+    {name:'Karan',cls:'B',subject:'Maths',accessible:false},
+    {name:'Divya',cls:'C',subject:'Physics',accessible:false},
+    {name:'Arun',cls:'C',subject:'Chemistry',accessible:false},
+    {name:'Meera',cls:'B',subject:'Chemistry',accessible:false},
+    {name:'Vikram',cls:'A',subject:'Physics',accessible:false},
+    {name:'Lakshmi',cls:'C',subject:'Maths',accessible:true},
+    {name:'Suresh',cls:'D',subject:'Biology',accessible:false},
+    {name:'Ananya',cls:'D',subject:'Biology',accessible:false},
+  ];
+  data.forEach((s,i)=>tryStudents.push({...s,id:i+1}));
+  renderTryStudentList();
+}
+function getNeighbors(r,c,rows,cols,adj){
+  const n=[];
+  if(adj==='h'){if(c>0)n.push([r,c-1]);if(c<cols-1)n.push([r,c+1]);}
+  else if(adj==='4'){if(r>0)n.push([r-1,c]);if(r<rows-1)n.push([r+1,c]);if(c>0)n.push([r,c-1]);if(c<cols-1)n.push([r,c+1]);}
+  else{for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){if(dr===0&&dc===0)continue;if(r+dr>=0&&r+dr<rows&&c+dc>=0&&c+dc<cols)n.push([r+dr,c+dc]);}}
+  return n;
+}
+function isOk(r,c,stu,grid,rows,cols,adj,nc,ns){
+  for(const[nr,nc2]of getNeighbors(r,c,rows,cols,adj)){
+    const nb=grid[nr][nc2];if(!nb)continue;
+    if(nc&&nb.cls===stu.cls)return false;
+    if(ns&&nb.subject===stu.subject)return false;
+  }
+  return true;
+}
+function runTrySolver(){
+  const rows=Math.max(2,Math.min(8,+document.getElementById('t-rows').value||4));
+  const cols=Math.max(2,Math.min(10,+document.getElementById('t-cols').value||5));
+  const adj=document.getElementById('t-adj').value;
+  const nc=document.getElementById('t-noclass').checked;
+  const ns=document.getElementById('t-nosub').checked;
+  const acc=document.getElementById('t-acc').checked;
+  const totalSeats=rows*cols;
+  document.getElementById('t-mseats').textContent=totalSeats;
+  document.getElementById('t-mstu').textContent=tryStudents.length;
+  const traceEl=document.getElementById('t-trace');
+  const msgEl=document.getElementById('t-msg');
+  const mapEl=document.getElementById('t-seatmap');
+  const trace=[];
+  const tlog=(msg,type)=>trace.push({msg,type});
+  if(!tryStudents.length){
+    msgEl.style.display='block';msgEl.style.background='#2a1f1a';msgEl.style.border='1px solid #5a3020';
+    msgEl.innerHTML='<p style="color:#f09c6b;font-size:0.88rem;">Please add at least one student first.</p>';
+    return;
+  }
+  if(tryStudents.length>totalSeats){
+    document.getElementById('t-mstatus').innerHTML='<span style="color:#f87171;">Over-constrained</span>';
+    msgEl.style.display='block';msgEl.style.background='#2a1a1a';msgEl.style.border='1px solid #5a2020';
+    msgEl.innerHTML=`<p style="color:#f87171;font-size:0.88rem;"><strong>Failed:</strong> ${tryStudents.length} students but only ${totalSeats} seats available. Add more rows/columns.</p>`;
+    tlog(`✗ Over-constrained: ${tryStudents.length} students > ${totalSeats} seats`,'fail');
+    renderTryTrace(trace);return;
+  }
+  const grid=Array.from({length:rows},()=>Array(cols).fill(null));
+  const seatOrder=[];
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)seatOrder.push([r,c]);
+  tlog(`▶ Hall: ${rows}×${cols} = ${totalSeats} seats | Students: ${tryStudents.length}`,'info');
+  tlog(`  Constraints: ${[nc?'no-same-class':'',ns?'no-same-subject':'',acc?'accessible-front':''].filter(Boolean).join(', ')||'none'} | Adj: ${adj}`,'info');
+  tlog('','');
+  const accStus=tryStudents.filter(s=>s.accessible);
+  const regStus=tryStudents.filter(s=>!s.accessible);
+  if(acc&&accStus.length){
+    let fi=0;
+    const frontSeats=seatOrder.filter(([r])=>r===0);
+    for(const s of accStus){
+      if(fi>=frontSeats.length){tlog(`  ✗ Not enough front seats for accessible students`,'fail');break;}
+      const[r,c]=frontSeats[fi++];
+      grid[r][c]=s;
+      tlog(`  ♿ ${s.name} [${s.cls}/${s.subject}] → seat (${r+1},${c+1})`,'ok');
+    }
+  }
+  let backtracks=0;
+  const remaining=[...regStus,...(acc?[]:accStus)];
+  function bt(idx){
+    if(idx===remaining.length)return true;
+    const s=remaining[idx];
+    const open=seatOrder.filter(([r,c])=>!grid[r][c]);
+    for(const[r,c]of open){
+      const ok=isOk(r,c,s,grid,rows,cols,adj,nc,ns);
+      tlog(`  ${ok?'✓':'✗'} ${s.name} [${s.cls}/${s.subject}] → (${r+1},${c+1}) ${ok?'OK':'conflict'}`,ok?'ok':'fail');
+      if(ok){grid[r][c]=s;if(bt(idx+1))return true;grid[r][c]=null;backtracks++;tlog(`  ↺ Backtrack from (${r+1},${c+1}) for ${s.name}`,'info');}
+    }
+    return false;
+  }
+  const solved=bt(0);
+  tlog('','');
+  if(solved){
+    tlog(`▶ Solution found! Backtracks: ${backtracks}`,'ok');
+    document.getElementById('t-mstatus').innerHTML='<span style="color:#86efac;">Solved ✓</span>';
+    msgEl.style.display='block';msgEl.style.background='#0f2a1a';msgEl.style.border='1px solid #1a4a2a';
+    msgEl.innerHTML=`<p style="color:#86efac;font-size:0.88rem;">✓ Valid seating arrangement found! <strong>${tryStudents.length}</strong> students placed across ${rows}×${cols} hall. Backtracks: ${backtracks}.</p>`;
+  }else{
+    tlog(`▶ No valid arrangement — constraints too strict.`,'fail');
+    document.getElementById('t-mstatus').innerHTML='<span style="color:#f87171;">Unsolvable</span>';
+    msgEl.style.display='block';msgEl.style.background='#2a1a1a';msgEl.style.border='1px solid #5a2020';
+    msgEl.innerHTML=`<p style="color:#f87171;font-size:0.88rem;">✗ Over-constrained: No valid arrangement satisfies all constraints. Try relaxing adjacency rules or increasing hall size.</p>`;
+  }
+  renderTryMap(grid,rows,cols,acc);
+  renderTryTrace(trace);
+  renderTryLegend();
+}
+function renderTryMap(grid,rows,cols,acc){
+  const el=document.getElementById('t-seatmap');
+  let html='<div style="display:flex;flex-direction:column;gap:5px;">';
+  for(let r=0;r<rows;r++){
+    html+=`<div style="display:flex;gap:5px;align-items:center;">`;
+    html+=`<div style="font-size:10px;color:#5a5450;width:16px;text-align:center;">${r+1}</div>`;
+    for(let c=0;c<cols;c++){
+      const s=grid[r][c];
+      const isAccRow=acc&&r===0;
+      if(s){
+        const bg=getClassColor(s.cls);
+        html+=`<div title="${s.name} | Class:${s.cls} | ${s.subject}" style="width:52px;height:50px;background:${bg}22;border:1px solid ${bg}55;border-radius:3px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:default;transition:transform .15s;font-size:9px;line-height:1.3;text-align:center;color:${bg};" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform=''">
+          <span style="font-weight:600;">${s.name.substring(0,6)}</span>
+          <span style="opacity:0.75;">${s.cls}·${s.subject.substring(0,4)}</span>
+          ${s.accessible?'<span>♿</span>':''}
+        </div>`;
+      }else{
+        html+=`<div style="width:52px;height:50px;background:${isAccRow?'#1a2a3a':'#0f0e0c'};border:1px solid ${isAccRow?'#2a4a6a':'#2e2c28'};border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#3a3830;">${isAccRow?'♿':'·'}</div>`;
+      }
+    }
+    html+=`</div>`;
+  }
+  html+='</div>';
+  el.innerHTML=html;
+}
+function renderTryTrace(trace){
+  const el=document.getElementById('t-trace');
+  if(!trace.length){el.textContent='No trace yet.';return;}
+  el.innerHTML=trace.map(({msg,type})=>{
+    const color=type==='ok'?'#86efac':type==='fail'?'#f87171':type==='info'?'#93c5fd':'#6a6458';
+    return `<div style="color:${color}">${msg||'&nbsp;'}</div>`;
+  }).join('');
+  el.scrollTop=el.scrollHeight;
+}
+function renderTryLegend(){
+  const el=document.getElementById('t-legend');
+  el.style.display='flex';
+  const classes=[...new Set(tryStudents.map(s=>s.cls))];
+  el.innerHTML=classes.map(cls=>`
+    <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#8a8070;">
+      <div style="width:10px;height:10px;border-radius:50%;background:${getClassColor(cls)};"></div>Class ${cls}
+    </div>`).join('');
+}
+</script>
+</body>
+</html>
