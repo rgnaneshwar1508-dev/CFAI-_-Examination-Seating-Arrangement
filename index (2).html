@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ExamSeat — Intelligent Examination Seating System</title>
+  <meta name="description" content="AI-powered exam seating arrangement using CSP, graph search and heuristics. CO1–CO6 project demo.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo" onclick="navTo('hero')"><span>Exam</span>Seat</span>
+  <ul class="nav-links">
+    <li><a onclick="navTo('abstract')">Abstract</a></li>
+    <li><a onclick="navTo('outcomes')">Course Outcomes</a></li>
+    <li><a onclick="navTo('howitworks')">How it works</a></li>
+    <li><a onclick="navTo('features')">Features</a></li>
+    <li><a onclick="navTo('tryit')" style="color:var(--accent)">Try it</a></li>
+  </ul>
+  <button class="nav-cta" onclick="navTo('tryit')">Generate Seating</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="reveal">
+    <div class="hero-eyebrow">AI-powered exam management</div>
+    <h1 class="hero-title">Seating that's<br><em>fair, secure,</em><br>and conflict-free</h1>
+    <p class="hero-desc">An intelligent examination seating system using Constraint Satisfaction Problems (CSP), graph search, and heuristics to automatically generate optimal, policy-compliant seating plans.</p>
+    <div class="hero-btns">
+      <button class="btn-solid" onclick="navTo('outcomes')">Explore Course Outcomes</button>
+      <button class="btn-outline" onclick="navTo('howitworks')">How it works</button>
+    </div>
+  </div>
+  <div class="reveal" style="transition-delay:0.18s">
+    <div class="seat-demo">
+      <div class="seat-demo-title">Exam hall — row allocation preview</div>
+      <div class="seat-grid-demo">
+        <div class="seat-cell sc-a">Arjun<br>A·Math</div>
+        <div class="seat-cell sc-b">Rahul<br>B·Phys</div>
+        <div class="seat-cell sc-c">Divya<br>C·Chem</div>
+        <div class="seat-cell sc-d">Meera<br>D·Bio</div>
+        <div class="seat-cell sc-e">Preet<br>E·Math</div>
+        <div class="seat-cell sc-e">Sonal<br>E·Phys</div>
+        <div class="seat-cell sc-a">Vikram<br>A·Chem</div>
+        <div class="seat-cell sc-d">Ananya<br>D·Math</div>
+        <div class="seat-cell sc-b">Suresh<br>B·Bio</div>
+        <div class="seat-cell sc-c">Lakshmi<br>C·Phys</div>
+        <div class="seat-cell sc-c">Karan<br>C·Math</div>
+        <div class="seat-cell sc-d">Sneha<br>D·Phys</div>
+        <div class="seat-cell sc-b">Priya<br>B·Chem</div>
+        <div class="seat-cell sc-e">Arun<br>E·Bio</div>
+        <div class="seat-cell sc-a">Riya<br>A·Phys</div>
+        <div class="seat-cell sc-b">Nisha<br>B·Math</div>
+        <div class="seat-cell sc-c">Tarun<br>C·Bio</div>
+        <div class="seat-cell sc-a">Pooja<br>A·Bio</div>
+        <div class="seat-cell sc-empty">♿ Reserved</div>
+        <div class="seat-cell sc-d">Raj<br>D·Chem</div>
+      </div>
+      <div class="demo-legend">
+        <div class="demo-leg-item"><div class="demo-dot" style="background:#3b82f6"></div>Class A</div>
+        <div class="demo-leg-item"><div class="demo-dot" style="background:#22c55e"></div>Class B</div>
+        <div class="demo-leg-item"><div class="demo-dot" style="background:#f59e0b"></div>Class C</div>
+        <div class="demo-leg-item"><div class="demo-dot" style="background:#ec4899"></div>Class D</div>
+        <div class="demo-leg-item"><div class="demo-dot" style="background:#8b5cf6"></div>Class E</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABSTRACT -->
+<section id="abstract">
+  <div class="section-label">Project abstract</div>
+  <h2 class="section-title">What is ExamSeat?</h2>
+  <div class="abstract-grid">
+    <div>
+      <p class="abstract-text">The Examination Seating Arrangement system allocates students to exam seats while avoiding adjacency conflicts and meeting special requirements. The primary objective is to ensure fair and secure seating by preventing students from the same class or subject from sitting next to each other.</p>
+      <br>
+      <p class="abstract-text">The system also handles special needs such as accessible seating for differently-abled students or reserved seats for specific conditions. When constraints increase, the arrangement can become over-constrained — no valid seating pattern satisfies all requirements simultaneously.</p>
+      <br>
+      <p class="abstract-text">The system identifies such situations and explains the reason for failure: insufficient seats, too many restrictions, or conflicting conditions. The solution uses CSP and graph-based algorithms to generate efficient, explainable seating plans, improving exam management and reducing manual errors.</p>
+    </div>
+    <div class="abstract-highlights">
+      <div class="highlight-item reveal"><div class="highlight-num">CSP</div><div class="highlight-label">Constraint Satisfaction Problem formulation</div></div>
+      <div class="highlight-item reveal" style="transition-delay:0.1s"><div class="highlight-num">BFS/A*</div><div class="highlight-label">Graph search for optimal placement</div></div>
+      <div class="highlight-item reveal" style="transition-delay:0.18s"><div class="highlight-num">MRV</div><div class="highlight-label">Minimum Remaining Values heuristic</div></div>
+      <div class="highlight-item reveal" style="transition-delay:0.26s"><div class="highlight-num">BT</div><div class="highlight-label">Backtracking with forward checking</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- COURSE OUTCOMES -->
+<section id="outcomes">
+  <div class="section-label">Course outcomes</div>
+  <h2 class="section-title">CO-wise project coverage</h2>
+  <p class="section-desc">Each course outcome (CO1–CO6) is directly implemented in ExamSeat. Click any card to expand full details.</p>
+
+  <div class="co-filter">
+    <button class="co-filter-btn active" onclick="filterCO('all',this)">All COs</button>
+    <button class="co-filter-btn" onclick="filterCO('co1',this)">CO1</button>
+    <button class="co-filter-btn" onclick="filterCO('co2',this)">CO2</button>
+    <button class="co-filter-btn" onclick="filterCO('co3',this)">CO3</button>
+    <button class="co-filter-btn" onclick="filterCO('co4',this)">CO4</button>
+    <button class="co-filter-btn" onclick="filterCO('co5',this)">CO5</button>
+    <button class="co-filter-btn" onclick="filterCO('co6',this)">CO6</button>
+  </div>
+
+  <div class="co-grid" id="coGrid">
+
+    <div class="co-card co1 reveal" data-co="co1" onclick="toggleCO(this)">
+      <div class="co-card-header">
+        <div class="co-big-num">CO1</div>
+        <div class="co-badge">CO1 — Problem Formulation</div>
+        <div class="co-title">Formulate real-world tasks as AI problems</div>
+        <div class="co-short">State space · Actions · Transitions · Goals · Costs · Constraints · Python data structures</div>
+      </div>
+      <div class="co-card-body">
+        <div class="co-detail">Students, seats, and rules are formalised into a CSP: <strong>variables</strong> are seats, <strong>domains</strong> are eligible students per seat, and <strong>constraints</strong> are adjacency restrictions. Entire problem state is stored in Python lists and dicts with traceable reasoning steps at every node.</div>
+        <div class="co-impl-box">
+          <div class="co-impl-label">Implementation in ExamSeat</div>
+          <div class="co-impl-text">The hall grid is the state space. Each seat assignment is an action. The goal state is a complete, conflict-free assignment. Costs are represented by backtrack depth. All structures use <strong>Python lists/dicts</strong> with class wrappers (<code>Student</code>, <code>Hall</code>, <code>Constraint</code>). Full reasoning trace is printed at each assignment step.</div>
+        </div>
+      </div>
+      <div class="co-card-footer">
+        <div class="co-tags"><span class="co-tag">State space</span><span class="co-tag">Actions</span><span class="co-tag">Goals</span><span class="co-tag">Python dicts/lists</span></div>
+        <div class="co-toggle">Details <span class="co-toggle-arrow">▾</span></div>
+      </div>
+    </div>
+
+    <div class="co-card co2 reveal" data-co="co2" style="transition-delay:0.07s" onclick="toggleCO(this)">
+      <div class="co-card-header">
+        <div class="co-big-num">CO2</div>
+        <div class="co-badge">CO2 — Search Algorithms</div>
+        <div class="co-title">Implement and analyze graph/state-space search</div>
+        <div class="co-short">BFS · DFS · UCS · A* · Greedy · Admissible heuristics · Time/space trade-offs</div>
+      </div>
+      <div class="co-card-body">
+        <div class="co-detail">Multiple search strategies are implemented and compared empirically. <strong>BFS</strong> explores seats level-by-level. <strong>DFS with backtracking</strong> goes deep first. <strong>A*</strong> uses a minimum-conflict heuristic proven admissible (never overestimates). Time and space complexity are logged across all strategies.</div>
+        <div class="co-impl-box">
+          <div class="co-impl-label">Implementation in ExamSeat</div>
+          <div class="co-impl-text">Seat selection order uses BFS across the grid graph. The core solver applies DFS backtracking. An A* variant uses <strong>h(n) = number of remaining conflicts</strong> as the heuristic — admissible because it never overestimates. Empirical comparison outputs backtrack counts, time taken, and nodes expanded per algorithm.</div>
+        </div>
+      </div>
+      <div class="co-card-footer">
+        <div class="co-tags"><span class="co-tag">BFS</span><span class="co-tag">DFS</span><span class="co-tag">A*</span><span class="co-tag">Heuristics</span><span class="co-tag">Complexity</span></div>
+        <div class="co-toggle">Details <span class="co-toggle-arrow">▾</span></div>
+      </div>
+    </div>
+
+    <div class="co-card co3 reveal" data-co="co3" style="transition-delay:0.13s" onclick="toggleCO(this)">
+      <div class="co-card-header">
+        <div class="co-big-num">CO3</div>
+        <div class="co-badge">CO3 — CSP Solving</div>
+        <div class="co-title">Model and solve constraint satisfaction problems</div>
+        <div class="co-short">Backtracking · Propagation · MRV · Degree heuristic · LCV · Scheduling/resource tasks</div>
+      </div>
+      <div class="co-card-body">
+        <div class="co-detail">ExamSeat is a textbook CSP. <strong>MRV</strong> selects the seat with the fewest valid students first. <strong>Degree heuristic</strong> breaks ties by number of constrained neighbours. <strong>LCV</strong> orders student placement to keep the most options open. Forward checking prunes domains after each assignment.</div>
+        <div class="co-impl-box">
+          <div class="co-impl-label">Implementation in ExamSeat</div>
+          <div class="co-impl-text">Core solver: backtracking + forward checking. MRV picks the most constrained seat. Degree heuristic resolves ties. LCV orders domain values to minimise future conflicts. Arc consistency (AC-3) is optionally run as pre-processing. Failure cases output a <strong>constraint proof</strong> explaining why no solution exists.</div>
+        </div>
+      </div>
+      <div class="co-card-footer">
+        <div class="co-tags"><span class="co-tag">Backtracking</span><span class="co-tag">MRV</span><span class="co-tag">Degree</span><span class="co-tag">LCV</span><span class="co-tag">AC-3</span></div>
+        <div class="co-toggle">Details <span class="co-toggle-arrow">▾</span></div>
+      </div>
+    </div>
+
+    <div class="co-card co4 reveal" data-co="co4" style="transition-delay:0.19s" onclick="toggleCO(this)">
+      <div class="co-card-header">
+        <div class="co-big-num">CO4</div>
+        <div class="co-badge">CO4 — Decision-Making Agents</div>
+        <div class="co-title">Design agents for sequential/adversarial settings</div>
+        <div class="co-short">Minimax · Alpha-beta pruning · Utility-based policy · Bounded computation · Failure modes</div>
+      </div>
+      <div class="co-card-body">
+        <div class="co-detail">An invigilator agent monitors seating and detects violations. <strong>Minimax</strong> models adversarial cheating attempts vs the invigilator's optimal blocking strategy. <strong>Alpha-beta pruning</strong> enables real-time decisions under bounded computation by eliminating irrelevant branches.</div>
+        <div class="co-impl-box">
+          <div class="co-impl-label">Implementation in ExamSeat</div>
+          <div class="co-impl-text">A <strong>utility-based agent</strong> evaluates candidate seating layouts with a score function combining conflict count, accessibility compliance, and proximity risk. Adversarial analysis identifies highest-risk adjacent pairs. Alpha-beta tree prunes irrelevant seat-swap options, enabling recommendations within a fixed compute budget.</div>
+        </div>
+      </div>
+      <div class="co-card-footer">
+        <div class="co-tags"><span class="co-tag">Minimax</span><span class="co-tag">Alpha-beta</span><span class="co-tag">Utility</span><span class="co-tag">Bounded search</span></div>
+        <div class="co-toggle">Details <span class="co-toggle-arrow">▾</span></div>
+      </div>
+    </div>
+
+    <div class="co-card co5 reveal" data-co="co5" style="transition-delay:0.25s" onclick="toggleCO(this)">
+      <div class="co-card-header">
+        <div class="co-big-num">CO5</div>
+        <div class="co-badge">CO5 — Probabilistic Reasoning</div>
+        <div class="co-title">Reasoning under uncertainty with Bayesian networks</div>
+        <div class="co-short">Bayesian networks · Markov models · Variable elimination · Message passing · Sampling</div>
+      </div>
+      <div class="co-card-body">
+        <div class="co-detail">A <strong>Bayesian network</strong> models cheating risk based on class proximity, subject similarity, and historical behaviour. <strong>Markov chains</strong> model the sequential hall-filling process. <strong>Variable elimination</strong> and message passing are used for efficient inference over seat configurations.</div>
+        <div class="co-impl-box">
+          <div class="co-impl-label">Implementation in ExamSeat</div>
+          <div class="co-impl-text">After placement, each adjacent pair is scored by a Bayesian network with nodes: <em>SameClass</em>, <em>SameSubject</em>, <em>ProximityRisk</em>, <em>CheatProbability</em>. Inference via variable elimination marginalises over unknown exam-day factors. High-risk pairs (P &gt; 0.7) are flagged in the final invigilator report.</div>
+        </div>
+      </div>
+      <div class="co-card-footer">
+        <div class="co-tags"><span class="co-tag">Bayesian net</span><span class="co-tag">Markov</span><span class="co-tag">Variable elim.</span><span class="co-tag">Inference</span></div>
+        <div class="co-toggle">Details <span class="co-toggle-arrow">▾</span></div>
+      </div>
+    </div>
+
+    <div class="co-card co6 reveal" data-co="co6" style="transition-delay:0.31s" onclick="toggleCO(this)">
+      <div class="co-card-header">
+        <div class="co-big-num">CO6</div>
+        <div class="co-badge">CO6 — Integrated AI Pipeline</div>
+        <div class="co-title">Build integrated AI reasoning pipelines in Python</div>
+        <div class="co-short">Representation + Search + CSP + Uncertainty + Decision logic · Reasoning traces · Constraint proofs</div>
+      </div>
+      <div class="co-card-body">
+        <div class="co-detail">ExamSeat integrates all components into a <strong>single Python pipeline</strong> with explainable outputs. Every decision — from seat assignment to risk flagging — is logged with a reasoning trace, constraint justification, and inference step.</div>
+        <div class="co-impl-box">
+          <div class="co-impl-label">Implementation in ExamSeat</div>
+          <div class="co-impl-text">Full pipeline: <strong>(1)</strong> Parse hall config → <strong>(2)</strong> Formulate CSP → <strong>(3)</strong> Run solver with step-by-step trace → <strong>(4)</strong> Apply Bayesian risk scoring → <strong>(5)</strong> Generate invigilator report. Every assignment is justified with a constraint proof. Over-constrained failures output the specific rule that made the problem unsolvable.</div>
+        </div>
+      </div>
+      <div class="co-card-footer">
+        <div class="co-tags"><span class="co-tag">Pipeline</span><span class="co-tag">Reasoning trace</span><span class="co-tag">Constraint proof</span><span class="co-tag">Explainability</span></div>
+        <div class="co-toggle">Details <span class="co-toggle-arrow">▾</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="howitworks">
+  <div class="section-label">Algorithm</div>
+  <h2 class="section-title">How the solver works</h2>
+  <div class="steps-layout">
+    <div>
+      <div class="step-item reveal"><div class="step-num">01</div><div><div class="step-title">Problem formulation (CO1)</div><div class="step-desc">The hall is a grid graph. Each seat is a variable, each student a domain value. Adjacency rules become hard constraints. Accessible seats are handled before the main solver runs.</div></div></div>
+      <div class="step-item reveal" style="transition-delay:0.08s"><div class="step-num">02</div><div><div class="step-title">Variable ordering — MRV (CO3)</div><div class="step-desc">Seats with the fewest valid student candidates are selected first. Ties are broken by the degree heuristic — seats with more constrained neighbours go first.</div></div></div>
+      <div class="step-item reveal" style="transition-delay:0.14s"><div class="step-num">03</div><div><div class="step-title">Value ordering — LCV (CO3)</div><div class="step-desc">For each seat, students are tried in Least Constraining Value order — placing the student that rules out the fewest options for neighbouring seats first.</div></div></div>
+      <div class="step-item reveal" style="transition-delay:0.2s"><div class="step-num">04</div><div><div class="step-title">Forward checking &amp; backtracking (CO2, CO3)</div><div class="step-desc">After each assignment, forward checking prunes inconsistent values from neighbouring domains. If a domain empties, the solver backtracks and logs the failure reason.</div></div></div>
+      <div class="step-item reveal" style="transition-delay:0.26s"><div class="step-num">05</div><div><div class="step-title">Over-constraint detection (CO3, CO6)</div><div class="step-desc">If no valid assignment exists, the system explains why: too many students from the same class, insufficient seats, or conflicting adjacency requirements.</div></div></div>
+      <div class="step-item reveal" style="transition-delay:0.32s"><div class="step-num">06</div><div><div class="step-title">Risk scoring &amp; report (CO5, CO6)</div><div class="step-desc">A Bayesian network scores each seat pair for cheating risk. The final report includes the seat map, constraint proof, inference steps, and flagged high-risk adjacencies.</div></div></div>
+    </div>
+    <div class="algo-display reveal" style="transition-delay:0.18s">
+      <div class="algo-title">CSP solver — Python pseudocode</div>
+      <div class="code-block">
+<span class="code-kw">def</span> <span class="code-fn">solve_seating</span>(hall, students, constraints):<br>
+&nbsp;&nbsp;<span class="code-cmt"># CO1: Formulate as CSP</span><br>
+&nbsp;&nbsp;csp = <span class="code-fn">CSP</span>(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;variables=hall.seats,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;domains={s: students[:] <span class="code-kw">for</span> s <span class="code-kw">in</span> hall.seats},<br>
+&nbsp;&nbsp;&nbsp;&nbsp;constraints=constraints)<br><br>
+&nbsp;&nbsp;<span class="code-cmt"># CO3: MRV + Degree heuristic</span><br>
+&nbsp;&nbsp;<span class="code-kw">def</span> <span class="code-fn">select_seat</span>(unassigned, domains):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-kw">return</span> <span class="code-fn">min</span>(unassigned, key=<span class="code-kw">lambda</span> s:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="code-fn">len</span>(domains[s]), -<span class="code-fn">degree</span>(s)))<br><br>
+&nbsp;&nbsp;<span class="code-cmt"># CO3: LCV ordering</span><br>
+&nbsp;&nbsp;<span class="code-kw">def</span> <span class="code-fn">order_values</span>(seat, domain):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-kw">return</span> <span class="code-fn">sorted</span>(domain,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;key=<span class="code-kw">lambda</span> st: <span class="code-fn">conflicts_caused</span>(seat, st))<br><br>
+&nbsp;&nbsp;<span class="code-cmt"># CO2: Backtracking + forward check</span><br>
+&nbsp;&nbsp;<span class="code-kw">def</span> <span class="code-fn">backtrack</span>(assignment):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-kw">if</span> <span class="code-fn">complete</span>(assignment): <span class="code-kw">return</span> assignment<br>
+&nbsp;&nbsp;&nbsp;&nbsp;seat = <span class="code-fn">select_seat</span>(unassigned, domains)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-kw">for</span> student <span class="code-kw">in</span> <span class="code-fn">order_values</span>(seat, domains[seat]):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-kw">if</span> <span class="code-fn">consistent</span>(seat, student, assignment):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assignment[seat] = student<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inf = <span class="code-fn">forward_check</span>(seat, student)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-kw">if</span> inf != FAILURE:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;result = <span class="code-fn">backtrack</span>(assignment)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-kw">if</span> result: <span class="code-kw">return</span> result<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-fn">restore_domains</span>(inf)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-kw">return</span> FAILURE<br><br>
+&nbsp;&nbsp;<span class="code-cmt"># CO5: Bayesian risk scoring</span><br>
+&nbsp;&nbsp;sol = <span class="code-fn">backtrack</span>({})<br>
+&nbsp;&nbsp;<span class="code-kw">if</span> sol: <span class="code-kw">return</span> <span class="code-fn">score_risk</span>(sol, bayes_net)<br>
+&nbsp;&nbsp;<span class="code-kw">else</span>: <span class="code-kw">raise</span> <span class="code-fn">OverConstrainedError</span>(<span class="code-fn">explain</span>())
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-label">System capabilities</div>
+  <h2 class="section-title">What the system can do</h2>
+  <div class="features-grid">
+    <div class="feature-cell reveal"><div class="feature-icon">🗺️</div><div class="feature-title">Conflict-free seat maps</div><div class="feature-desc">Automatically generates seating plans where no two students from the same class or subject are adjacent — horizontally, vertically, or diagonally.</div></div>
+    <div class="feature-cell reveal" style="transition-delay:0.06s"><div class="feature-icon">♿</div><div class="feature-title">Accessibility support</div><div class="feature-desc">Reserves front-row or aisle seats for differently-abled students before running the main solver. Treated as hard constraints with highest priority.</div></div>
+    <div class="feature-cell reveal" style="transition-delay:0.12s"><div class="feature-icon">⚡</div><div class="feature-title">Over-constraint detection</div><div class="feature-desc">When no valid arrangement exists, the system identifies the exact reason — same-class overload, insufficient seats, or conflicting rules — and explains it clearly.</div></div>
+    <div class="feature-cell reveal" style="transition-delay:0.18s"><div class="feature-icon">🔍</div><div class="feature-title">Step-by-step reasoning trace</div><div class="feature-desc">Every assignment, constraint check, forward-check result, and backtrack is logged with a full trace — satisfying CO6 explainability requirements.</div></div>
+    <div class="feature-cell reveal" style="transition-delay:0.24s"><div class="feature-icon">📊</div><div class="feature-title">Heuristic comparison</div><div class="feature-desc">Run MRV, Degree, or LCV variants independently and compare backtrack counts, time taken, and nodes expanded — satisfying CO2's empirical analysis.</div></div>
+    <div class="feature-cell reveal" style="transition-delay:0.3s"><div class="feature-icon">🧠</div><div class="feature-title">Bayesian risk scoring</div><div class="feature-desc">After placement, a Bayesian network estimates cheating risk for each adjacent pair based on class proximity, subject overlap, and exam history (CO5).</div></div>
+  </div>
+</section>
+
+<!-- TRY IT -->
+<section id="tryit">
+  <div class="section-label">Live demo</div>
+  <h2 class="section-title">Generate your exam seating</h2>
+  <p class="section-desc">Add students, configure the hall, and run the CSP solver to get a conflict-free seating arrangement instantly.</p>
+
+  <div class="tryit-layout">
+
+    <!-- LEFT COLUMN -->
+    <div style="display:flex;flex-direction:column;gap:1.2rem;">
+
+      <!-- Hall config -->
+      <div class="tryit-panel">
+        <div class="tryit-label">Hall configuration</div>
+        <div class="tryit-grid2">
+          <div>
+            <label class="field-label">Rows</label>
+            <input class="tryit-input" type="number" id="t-rows" value="4" min="2" max="8">
+          </div>
+          <div>
+            <label class="field-label">Columns</label>
+            <input class="tryit-input" type="number" id="t-cols" value="5" min="2" max="10">
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          <label class="field-label">Adjacency constraint</label>
+          <select class="tryit-select" id="t-adj">
+            <option value="h">Horizontal only (left/right)</option>
+            <option value="4" selected>4 directions (up/down/left/right)</option>
+            <option value="8">8 directions (including diagonal)</option>
+          </select>
+        </div>
+        <div class="tryit-check-row">
+          <label class="tryit-check"><input type="checkbox" id="t-noclass" checked> No same class adjacent</label>
+          <label class="tryit-check"><input type="checkbox" id="t-nosub" checked> No same subject adjacent</label>
+          <label class="tryit-check"><input type="checkbox" id="t-acc"> Reserve front row for accessibility</label>
+        </div>
+      </div>
+
+      <!-- Add student -->
+      <div class="tryit-panel">
+        <div class="tryit-label">Add student</div>
+        <div class="tryit-grid2">
+          <div>
+            <label class="field-label">Name</label>
+            <input class="tryit-input" type="text" id="t-name" placeholder="e.g. Arjun">
+          </div>
+          <div>
+            <label class="field-label">Class</label>
+            <input class="tryit-input" type="text" id="t-class" placeholder="e.g. A">
+          </div>
+          <div>
+            <label class="field-label">Subject</label>
+            <input class="tryit-input" type="text" id="t-sub" placeholder="e.g. Maths">
+          </div>
+          <div style="display:flex;align-items:flex-end;padding-bottom:2px;">
+            <label class="tryit-check"><input type="checkbox" id="t-sacc"> ♿ Accessible</label>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button class="btn-add" onclick="addTryStudent()">+ Add Student</button>
+          <button class="btn-ghost" onclick="loadSampleStudents()">Sample data</button>
+        </div>
+      </div>
+
+      <!-- Student list -->
+      <div class="tryit-panel">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem;">
+          <div class="tryit-label" style="margin:0;">Students <span id="t-count" style="color:#5a5450;">0</span></div>
+          <button onclick="clearStudents()" style="font-size:0.72rem;color:#5a5450;background:none;border:none;cursor:pointer;">Clear all</button>
+        </div>
+        <div id="t-studentlist" class="student-list">
+          <p style="font-size:0.82rem;color:#5a5450;padding:4px 0;">No students yet — add some above or load sample data.</p>
+        </div>
+      </div>
+
+      <!-- Run button -->
+      <button class="btn-run" onclick="runTrySolver()">▶ Run CSP Solver</button>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div style="display:flex;flex-direction:column;gap:1.2rem;">
+
+      <!-- Stats -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+        <div class="tryit-panel"><div class="stat-label">Total seats</div><div class="stat-val" id="t-mseats">—</div></div>
+        <div class="tryit-panel"><div class="stat-label">Students</div><div class="stat-val" id="t-mstu">—</div></div>
+        <div class="tryit-panel"><div class="stat-label">Status</div><div id="t-mstatus" style="font-size:0.9rem;color:var(--paper);padding-top:4px;">—</div></div>
+      </div>
+
+      <!-- Seat map -->
+      <div class="tryit-panel" style="min-height:220px;">
+        <div class="tryit-label">Seat map</div>
+        <div id="t-seatmap"><p style="font-size:0.85rem;color:#5a5450;">Run the solver to see the seat map here.</p></div>
+        <div id="t-legend" style="display:none;margin-top:1rem;flex-wrap:wrap;gap:10px;"></div>
+      </div>
+
+      <!-- Message -->
+      <div id="t-msg" class="msg-box"></div>
+
+      <!-- Trace -->
+      <div class="tryit-panel">
+        <div class="tryit-label">Reasoning trace</div>
+        <div id="t-trace" class="trace-box">Run the solver to see step-by-step constraint checking.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo"><span>Exam</span>Seat</div>
+  <div class="footer-note">AI course project demonstrating CO1–CO6:<br>Problem formulation · Search · CSP · Decision agents · Probabilistic reasoning · Integrated pipelines</div>
+  <div class="footer-links">
+    <a onclick="navTo('abstract')">Abstract</a>
+    <a onclick="navTo('outcomes')">COs</a>
+    <a onclick="navTo('howitworks')">Algorithm</a>
+    <a onclick="navTo('features')">Features</a>
+    <a onclick="navTo('tryit')">Try it</a>
+  </div>
+</footer>
+
+<script src="solver.js"></script>
+</body>
+</html>
